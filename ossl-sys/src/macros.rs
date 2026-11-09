@@ -1,9 +1,9 @@
 //! Rust ports of function-like C macros that bindgen cannot see.
 //! Each port is a thin wrapper over an exported fn + a bindgen constant.
 
+use crate::{BIO_test_flags, CRYPTO_clear_free, CRYPTO_free, SSL_CTX_ctrl, SSL_ctrl, TLSEXT_NAMETYPE_host_name, BIO, BIO_FLAGS_READ, BIO_FLAGS_SHOULD_RETRY, SSL, SSL_CTRL_MODE, SSL_CTRL_SET_MAX_PROTO_VERSION, SSL_CTRL_SET_MIN_PROTO_VERSION, SSL_CTRL_SET_TLSEXT_HOSTNAME, SSL_CTX};
 use std::ffi::c_void;
 use std::os::raw;
-use crate::{CRYPTO_clear_free, CRYPTO_free, SSL_CTX_ctrl, SSL_CTX};
 
 /// Port of `OPENSSL_free(addr)`.
 ///
@@ -12,15 +12,41 @@ use crate::{CRYPTO_clear_free, CRYPTO_free, SSL_CTX_ctrl, SSL_CTX};
 /// not already been freed.
 #[inline]
 pub unsafe fn OPENSSL_free(ptr: *mut c_void) {
-    CRYPTO_free(ptr, c"".as_ptr(), 0);
+    CRYPTO_free(ptr, c"".as_ptr(), 0)
 }
 
 #[inline]
 pub unsafe fn OPENSSL_clear_free(ptr: *mut c_void, num: usize) {
-    CRYPTO_clear_free(ptr, num, c"".as_ptr(), 0);
+    CRYPTO_clear_free(ptr, num, c"".as_ptr(), 0)
 }
 
 #[inline]
-pub unsafe fn SSL_CTX_set_min_proto_version(ctx: *mut SSL_CTX, version: raw::c_long, ) {
-    SSL_CTX_ctrl(ctx, raw::c_int::from(123), version, std::ptr::null_mut());
+pub unsafe fn SSL_CTX_set_min_proto_version(ctx: *mut SSL_CTX, version: raw::c_long) -> raw::c_long {
+    SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MIN_PROTO_VERSION as raw::c_int, version, std::ptr::null_mut())
+}
+
+#[inline]
+pub unsafe fn SSL_CTX_set_max_proto_version(ctx: *mut SSL_CTX, version: raw::c_long) -> raw::c_long {
+    SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MAX_PROTO_VERSION as raw::c_int, version, std::ptr::null_mut())
+}
+
+#[inline]
+pub unsafe fn SSL_CTX_set_mode(ctx: *mut SSL_CTX, op: raw::c_long) -> raw::c_long {
+    SSL_CTX_ctrl(ctx, SSL_CTRL_MODE as raw::c_int, op, std::ptr::null_mut())
+}
+
+#[inline]
+pub unsafe fn SSL_set_tlsext_host_name(s: *mut SSL, name: *mut c_void) -> raw::c_long {
+    SSL_ctrl(s, SSL_CTRL_SET_TLSEXT_HOSTNAME as raw::c_int,
+             TLSEXT_NAMETYPE_host_name as raw::c_long, name)
+}
+
+#[inline]
+pub unsafe fn BIO_should_retry(a: *const BIO) -> raw::c_int {
+    BIO_test_flags(a, BIO_FLAGS_SHOULD_RETRY as raw::c_int)
+}
+
+#[inline]
+pub unsafe fn BIO_should_read(a: *const BIO) -> raw::c_int {
+    BIO_test_flags(a, BIO_FLAGS_READ as raw::c_int)
 }
