@@ -1,7 +1,7 @@
 //! Rust ports of function-like C macros that bindgen cannot see.
 //! Each port is a thin wrapper over an exported fn + a bindgen constant.
 
-use crate::{BIO_ctrl, BIO_test_flags, CRYPTO_clear_free, CRYPTO_free, SSL_CTX_ctrl, SSL_ctrl, TLSEXT_NAMETYPE_host_name, BIO, BIO_CTRL_INFO, BIO_CTRL_PENDING, BIO_CTRL_WPENDING, BIO_FLAGS_READ, BIO_FLAGS_SHOULD_RETRY, BIO_FLAGS_WRITE, SSL, SSL_CTRL_MODE, SSL_CTRL_SET_MAX_PROTO_VERSION, SSL_CTRL_SET_MIN_PROTO_VERSION, SSL_CTRL_SET_TLSEXT_HOSTNAME, SSL_CTX};
+use crate::{BIO_ctrl, BIO_test_flags, CRYPTO_clear_free, CRYPTO_free, SSL_CTX_callback_ctrl, SSL_CTX_ctrl, SSL_ctrl, TLSEXT_NAMETYPE_host_name, BIO, BIO_CTRL_INFO, BIO_CTRL_PENDING, BIO_CTRL_WPENDING, BIO_FLAGS_READ, BIO_FLAGS_SHOULD_RETRY, BIO_FLAGS_WRITE, SSL, SSL_CTRL_MODE, SSL_CTRL_SET_MAX_PROTO_VERSION, SSL_CTRL_SET_MIN_PROTO_VERSION, SSL_CTRL_SET_TLSEXT_HOSTNAME, SSL_CTRL_SET_TLSEXT_SERVERNAME_CB, SSL_CTX};
 use std::ffi::c_void;
 use std::os::raw;
 
@@ -69,4 +69,12 @@ pub unsafe fn BIO_pending(b: *mut BIO) -> raw::c_int {
 #[inline]
 pub unsafe fn BIO_wpending(b: *mut BIO) -> raw::c_int {
     BIO_ctrl(b, BIO_CTRL_WPENDING as raw::c_int, 0, std::ptr::null_mut()) as raw::c_int
+}
+
+
+pub type ServernameCb = unsafe extern "C" fn(s: *mut SSL, al: *mut raw::c_int, arg: *mut raw::c_void) -> raw::c_int;
+#[inline]
+pub unsafe fn SSL_CTX_set_tlsext_servername_callback(ctx: *mut SSL_CTX, c_fn: Option<ServernameCb>) -> raw::c_long {
+    let cb: Option<unsafe extern "C" fn()> = std::mem::transmute(c_fn);
+    SSL_CTX_callback_ctrl(ctx, SSL_CTRL_SET_TLSEXT_SERVERNAME_CB as raw::c_int, cb)
 }
