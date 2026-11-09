@@ -36,7 +36,7 @@ fn main() {
         .header("wrapper.h")
         .allowlist_function("(SSL|TLS|DTLS|BIO|X509|X509V3|ERR|PEM|EVP_PKEY|ASN1|GENERAL_NAME|OPENSSL|OpenSSL|CRYPTO|d2i|i2d)_.*")
         .allowlist_type("(SSL|TLS|BIO|X509|EVP_PKEY|ASN1|GENERAL_NAME|OPENSSL|CRYPTO|ossl).*")
-        .allowlist_var("(SSL|TLS|TLSEXT|BIO|X509|ERR|OPENSSL|EVP_PKEY|CRYPTO|ASN1|GEN|OSSL)_.*")
+        .allowlist_var("(SSL|TLS|TLS1|TLSEXT|BIO|X509|ERR|OPENSSL|EVP_PKEY|CRYPTO|ASN1|GEN|OSSL)_.*")
         .default_enum_style(bindgen::EnumVariation::Consts)
         .layout_tests(false)
         .generate_comments(false)
