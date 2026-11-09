@@ -1,7 +1,7 @@
 //! Rust ports of function-like C macros that bindgen cannot see.
 //! Each port is a thin wrapper over an exported fn + a bindgen constant.
 
-use crate::{BIO_ctrl, BIO_test_flags, CRYPTO_clear_free, CRYPTO_free, SSL_CTX_callback_ctrl, SSL_CTX_ctrl, SSL_ctrl, TLSEXT_NAMETYPE_host_name, BIO, BIO_CTRL_INFO, BIO_CTRL_PENDING, BIO_CTRL_WPENDING, BIO_FLAGS_READ, BIO_FLAGS_SHOULD_RETRY, BIO_FLAGS_WRITE, SSL, SSL_CTRL_MODE, SSL_CTRL_SET_MAX_PROTO_VERSION, SSL_CTRL_SET_MIN_PROTO_VERSION, SSL_CTRL_SET_TLSEXT_HOSTNAME, SSL_CTRL_SET_TLSEXT_SERVERNAME_ARG, SSL_CTRL_SET_TLSEXT_SERVERNAME_CB, SSL_CTX};
+use crate::{BIO_ctrl, BIO_test_flags, CRYPTO_clear_free, CRYPTO_free, SSL_CTX_callback_ctrl, SSL_CTX_ctrl, SSL_ctrl, TLSEXT_NAMETYPE_host_name, BIO, BIO_CTRL_INFO, BIO_CTRL_PENDING, BIO_CTRL_WPENDING, BIO_FLAGS_READ, BIO_FLAGS_SHOULD_RETRY, BIO_FLAGS_WRITE, SSL, SSL_CTRL_EXTRA_CHAIN_CERT, SSL_CTRL_MODE, SSL_CTRL_SET_MAX_PROTO_VERSION, SSL_CTRL_SET_MIN_PROTO_VERSION, SSL_CTRL_SET_TLSEXT_HOSTNAME, SSL_CTRL_SET_TLSEXT_SERVERNAME_ARG, SSL_CTRL_SET_TLSEXT_SERVERNAME_CB, SSL_CTX};
 use std::ffi::c_void;
 use std::os::raw;
 
@@ -82,4 +82,9 @@ pub unsafe fn SSL_CTX_set_tlsext_servername_callback(ctx: *mut SSL_CTX, c_fn: Op
 #[inline]
 pub unsafe fn SSL_CTX_set_tlsext_servername_arg(ctx: *mut SSL_CTX, arg: *mut c_void) -> raw::c_long {
     SSL_CTX_ctrl(ctx, SSL_CTRL_SET_TLSEXT_SERVERNAME_ARG as raw::c_int, 0, arg)
+}
+
+#[inline]
+pub unsafe fn SSL_CTX_add_extra_chain_cert(ctx: *mut SSL_CTX, x509: *mut c_void) -> raw::c_long {
+    SSL_CTX_ctrl(ctx, SSL_CTRL_EXTRA_CHAIN_CERT as raw::c_int, 0, x509)
 }
