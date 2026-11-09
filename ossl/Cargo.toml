@@ -1,0 +1,8 @@
+[package]
+name = "ossl"
+version = "0.1.0"
+edition = "2021"
+description = "Safe Rust wrapper over OpenSSL 3.x"
+
+[dependencies]
+ossl-sys = { path = "../ossl-sys" }

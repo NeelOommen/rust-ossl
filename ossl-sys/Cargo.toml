@@ -1,0 +1,11 @@
+[package]
+name = "ossl-sys"
+version = "0.1.0"
+edition = "2021"
+links = "ssl"
+build = "build.rs"
+description = "Raw OpenSSL 3.x FFI bindings (bindgen)"
+
+[build-dependencies]
+bindgen = "0.73"
+pkg-config = "0.3"

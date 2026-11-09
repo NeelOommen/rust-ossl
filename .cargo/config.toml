@@ -1,0 +1,3 @@
+# Homebrew openssl@3 on Apple Silicon. Override with your own env if elsewhere.
+[env]
+PKG_CONFIG_PATH = { value = "/opt/homebrew/opt/openssl@3/lib/pkgconfig", force = false }
