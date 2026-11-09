@@ -1,7 +1,7 @@
 //! Rust ports of function-like C macros that bindgen cannot see.
 //! Each port is a thin wrapper over an exported fn + a bindgen constant.
 
-use crate::{BIO_test_flags, CRYPTO_clear_free, CRYPTO_free, SSL_CTX_ctrl, SSL_ctrl, TLSEXT_NAMETYPE_host_name, BIO, BIO_FLAGS_READ, BIO_FLAGS_SHOULD_RETRY, SSL, SSL_CTRL_MODE, SSL_CTRL_SET_MAX_PROTO_VERSION, SSL_CTRL_SET_MIN_PROTO_VERSION, SSL_CTRL_SET_TLSEXT_HOSTNAME, SSL_CTX};
+use crate::{BIO_test_flags, CRYPTO_clear_free, CRYPTO_free, SSL_CTX_ctrl, SSL_ctrl, TLSEXT_NAMETYPE_host_name, BIO, BIO_FLAGS_READ, BIO_FLAGS_SHOULD_RETRY, BIO_FLAGS_WRITE, SSL, SSL_CTRL_MODE, SSL_CTRL_SET_MAX_PROTO_VERSION, SSL_CTRL_SET_MIN_PROTO_VERSION, SSL_CTRL_SET_TLSEXT_HOSTNAME, SSL_CTX};
 use std::ffi::c_void;
 use std::os::raw;
 
@@ -49,4 +49,9 @@ pub unsafe fn BIO_should_retry(a: *const BIO) -> raw::c_int {
 #[inline]
 pub unsafe fn BIO_should_read(a: *const BIO) -> raw::c_int {
     BIO_test_flags(a, BIO_FLAGS_READ as raw::c_int)
+}
+
+#[inline]
+pub unsafe fn BIO_should_write(a: *const BIO) -> raw::c_int {
+    BIO_test_flags(a, BIO_FLAGS_WRITE as raw::c_int)
 }
