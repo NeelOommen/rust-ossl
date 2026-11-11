@@ -70,6 +70,7 @@ mod tests {
     use super::*;
     use ossl_sys::{BIO_free, BIO_new_mem_buf, PEM_read_bio_X509};
     use std::ptr;
+    use crate::errors::error::OsslError;
 
     /// Push one real error on this thread's queue: parse garbage as a PEM cert.
     fn push_error() {
@@ -130,6 +131,24 @@ mod tests {
         let other = std::thread::spawn(|| ErrorStack::get().is_empty()).join().unwrap();
         assert!(other);
         assert!(!ErrorStack::get().is_empty());
+    }
+
+    #[test]
+    fn send_and_sync() {
+        fn assert_send_sync<T: Send + Sync>() {}
+        assert_send_sync::<ErrorStack>();
+        assert_send_sync::<OsslError>();
+    }
+
+    #[test]
+    fn moves_across_threads() {
+        ErrorStack::clear();
+        push_error();
+        let s = ErrorStack::get();
+        let n = s.errors().len();
+        let back = std::thread::spawn(move || s).join().unwrap();
+        assert_eq!(back.errors().len(), n);
+        assert!(!back.errors()[0].message().is_empty());
     }
 
     #[test]

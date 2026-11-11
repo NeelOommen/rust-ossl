@@ -7,8 +7,6 @@ The workspace has two crates:
 - **`ossl-sys`**: raw FFI. bindgen output plus hand-written Rust ports of the function-like C macros bindgen skips (`src/macros.rs`). No logic, no safety guarantees. No C shim unless a macro cannot be expressed in Rust.
 - **`ossl`**: the safe API. RAII types that free what they own, `Result`-based errors, explicit ownership rules, and panic-safe callbacks (a panic never unwinds across the FFI boundary).
 
-Status: early work in progress. Nothing here is stable or ready for use yet. Planning lives in [`plan.md`](plan.md), per-unit progress in [`work.md`](work.md), and the per-item procedure in [`migration_process.md`](migration_process.md).
-
 Requires OpenSSL 3.x (found via `pkg-config` or `OPENSSL_DIR`).
 
 ## Contract
